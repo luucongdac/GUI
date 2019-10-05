@@ -10,6 +10,7 @@ from pathlib import Path
 import win32com.client
 
 def copy_file(path_winAMS_t, name_function_t, source_function_t ):
+    return_path = ''
     #------------------------------------------------------------------------------------------------------------
     # WinAMS workspace
     path_winAMS = path_winAMS_t #"D://Workspace//P33A_QCV2_Vol2_Group7_Stub_20190822//P33A_QCV2_vol2_Group7//root//UnitTest//WinAMSTest"
@@ -460,7 +461,9 @@ def copy_file(path_winAMS_t, name_function_t, source_function_t ):
     path_winAMS = path_winAMS + 'AMSTB_SrcFile.c'
     path_winAMS = path_winAMS.replace('//','\\')
     sheet7['A14'] = path_winAMS
+    sheet7['A15'] =  '"' + path_out_report + '/' + name_function1 + '.xlsx' + '$' + source_function1 + '"'
     w.save("D:/temp.xlsx")
+    return(return_path)
 
     #---------------------------------------
 

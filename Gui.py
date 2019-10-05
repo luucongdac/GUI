@@ -13,6 +13,8 @@ from tkinter import messagebox
 import random
 import time
 import subprocess
+import os, shutil
+from shutil import copyfile
 
 import sys, string, os
 #from new_colect_testcase import run
@@ -43,21 +45,34 @@ txt_func.grid(column=0, row=6)
 
 path_excel = ''
 source = ''
-path_exe = r"C:/Users/luuco/Desktop/GUI/ver1.2.exe"
+path_exe = r"D:/ver1.2.exe"
+path = ''
 #
 
-
-
+def add_last_character(path):
+    wb = openpyxl.load_workbook(path)
+    sheet = wb['テストケース表']
+    max_rown = sheet.max_row
+    sheet['B' + str(max_rown +1)] = 'end'
+    wb.save(path)
 
 def task():
     box_1 = txt_path.get()
     box_1 = box_1.replace('\\','/')
+    box_1 = box_1.replace('"','')
     box_2 = txt_func.get()
     lb_status.configure(text="Running Colect TestCase")
     # call exe colect testcase
+    shutil.copy(box_1, 'D:/' )
+    tmp = box_1.split('/')
+    box_1 = 'D:/' + tmp[-1]
+    add_last_character(box_1)
     subprocess.call([path_exe, box_1, box_2])
+    os.remove(box_1)
     #run(box_1, box_2, 0, 0)
     lb_status.configure(text="Finish")
+    txt_path.delete(0, END)
+    txt_func.delete(0, END)
     
 def clicked():
     task()
@@ -83,29 +98,49 @@ lb5.grid(column=0, row=26)
 txt_Function = Entry(window,width=70)
 txt_Function.grid(column=0, row=27)
 
+return_path = ''
+path = ''
+path_t = ''
+
 def clicked_copy():
     box_1 = txt_WinAms.get()
     box_1 = box_1.replace('\\','/')
     box_2 = txt_Source.get()
     box_3 = txt_Function.get()
     try:
-        copy_file(box_1, box_3, box_2)
+        return_path = copy_file(box_1, box_3, box_2)
     except:
         print('can not copy file\n')
+    path = return_path.split('$')
+    print(path)
                                 
 def clicked_run():
     try:
         run_macro()
     except:
         print('can not run Macro\n')
+
+temp = ''   
 def clicked_colect():
     w = openpyxl.load_workbook("D:/temp.xlsx")
     sheet7 = w['Sheet1']
-
-    box_1 = str(sheet7['A7'].value)
-    box_1 = box_1.replace('\\','/')
-    box_2 = str(sheet7['A13'].value)
-    subprocess.call([path_exe, box_1, box_2])
+    temp = str(sheet7['A15'].value)
+    temp = temp.replace('\\','/')
+    temp = temp.replace('"','')
+    temp = temp.split('$')
+    box_1 = temp[0]
+    box_2 = temp[1]
+    #box_2 = box_2.replace(' ','')
+    #box_1 = path[0]
+    #box_2 = path[1]
+    print(box_1)
+    print(box_2)
+    txt_path.delete(0, END)
+    txt_path.insert(0,box_1)
+    txt_func.delete(0, END)
+    txt_func.insert(0,box_2)
+    #subprocess.call([path_exe, box_1, box_2])
+    
 #------------------------------------------------------
 b6 = Label(window, text="                 ")
 b6.grid(column=0, row=28)
@@ -119,7 +154,7 @@ btn_2.grid(column=0, row=31)
 
 b8 = Label(window, text="                 ")
 b8.grid(column=0, row=32)
-btn_3 = Button(window, text="colect Tescase...", command=clicked_colect,bg="orange", fg="brown")
+btn_3 = Button(window, text="Give path Tescase...", command=clicked_colect,bg="orange", fg="brown")
 btn_3.grid(column=0, row=33)
 
 
